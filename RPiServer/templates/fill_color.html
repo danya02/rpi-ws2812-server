@@ -1,0 +1,12 @@
+<html>
+	<head><title>Pick a fill color</title></head>
+	<body>
+		<h1> Pick a fill color here </h1>
+		<p>Or <a href="{{url_for('disable_led_psu')}}">disable the power supply</a>?</p>
+		<hr>
+		<form>
+			<input type="color" name="color" value="{{color}}">
+			<input type="submit">
+		</form>
+	</body>
+</html>

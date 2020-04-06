@@ -1,5 +1,6 @@
 import redis
 import serial
+import json
 R = redis.Redis()
 R.config_set("notify-keyspace-events", "KEA")
 
@@ -7,6 +8,7 @@ P = R.pubsub()
 P.psubscribe('*')
 
 LED_COUNT = 550
+R.set('led_count', LED_COUNT)
 
 PIPE = serial.Serial('/dev/ttyUSB1', 500000, timeout=10)
 
@@ -20,9 +22,14 @@ def write_colors(colors):
     for color in colors:
         for shade in color:
             buf.append(shade)
-    print(buf)
     PIPE.write(buf)
     PIPE.flush()
+
+def commit_pixels():
+    pixels = []
+    for i in range(LED_COUNT):
+        pixels.append(json.loads(R.get(str(i)) or (0,0,0)))
+    write_colors(pixels)
 
 for event in P.listen():
     print(event)
@@ -35,4 +42,7 @@ for event in P.listen():
             else:
                 print('Turn off PSU')
                 write_colors([(0,0,0)])
+        elif event['data'] == b'commit':
+            print('Committing pixels to Adalight...')
+            commit_pixels()
 
