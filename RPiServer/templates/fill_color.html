@@ -1,12 +1,30 @@
 <html>
-	<head><title>Pick a fill color</title></head>
+	<head>
+		<title>Pick a fill color</title>
+	</head>
 	<body>
 		<h1> Pick a fill color here </h1>
 		<p>Or <a href="{{url_for('disable_led_psu')}}">disable the power supply</a>?</p>
 		<hr>
 		<form>
-			<input type="color" name="color" value="{{color}}">
-			<input type="submit">
+			<input id="colorinput" type="color" name="color" value="{{color}}">
 		</form>
 	</body>
+	<script>
+		var colorinp = document.getElementById('colorinput');
+		var last_sent_value = colorinp.value;
+		window.setInterval(function(){
+			if(colorinp.value != last_sent_value){
+				last_sent_value = colorinp.value;
+				console.log(colorinp.value);
+				var xmlHttp = new XMLHttpRequest();
+				xmlHttp.onreadystatechange = function() { 
+					if (xmlHttp.readyState == 4 && xmlHttp.status == 200)
+						console.log(xmlHttp.responseText);
+				}
+				xmlHttp.open("PUT", "{{url_for('fill_color')}}", true); // true for asynchronous 
+				xmlHttp.send(JSON.stringify({color: colorinp.value}));
+			}
+		}, 1000);
+	</script>
 </html>

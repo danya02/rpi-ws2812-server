@@ -10,7 +10,7 @@ P.psubscribe('*')
 LED_COUNT = 550
 R.set('led_count', LED_COUNT)
 
-PIPE = serial.Serial('/dev/ttyUSB1', 500000, timeout=10)
+PIPE = serial.Serial('/dev/ttyUSB0', 500000, timeout=10)
 
 def write_colors(colors):
     buf = bytearray(b'Ada')
